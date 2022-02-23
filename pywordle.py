@@ -20,11 +20,12 @@ class Game:
 
     def __init__(self):
 
+        self.alphabet = [[abc, 0] for abc in "abcdefghijklmnopqrstuvwxyz"]
         self.window = Tk()
 
         self.window.bind("<Key>", self.CommandButton1)
 
-        # importants variables (usefull ones)
+        # variables importantes
         self.tries = []
         self.words_limit = 5
         self.cbg = "#404040"
@@ -35,14 +36,6 @@ class Game:
             self.words = f.readlines()
 
         self.guess = ""
-        while len(self.guess) != self.words_limit:
-            self.guess = random.choice(self.words)
-            self.guess = self.guess.strip("\n")
-        print(self.guess)
-
-        # 0 = Nothing, 1 = NotHere, 2 = Yes, 3 = Exactly
-        self.alphabet = [[abc, 0] for abc in "abcdefghijklmnopqrstuvwxyz"]
-        # print(self.alphabet)
 
         self.window.title("Wordle")
         self.window.geometry("1000x800")
@@ -51,7 +44,7 @@ class Game:
         self.window.iconbitmap("icone.ico")
         self.window.config(background=self.cbg, cursor="plus")
 
-        # definition of mains frames
+        # definition des frames principales
         self.display_word = Frame(self.window, bg=self.cbg)
         self.display_word_2 = Frame(self.window, bg=self.cbg)
         self.display_word_3 = Frame(self.window, bg=self.cbg)
@@ -59,7 +52,7 @@ class Game:
         self.display_word_5 = Frame(self.window, bg=self.cbg)
         self.display_word_6 = Frame(self.window, bg=self.cbg)
 
-        # definition of informatives Frames
+        # definition des Frames infos
         self.geoguessr = Frame(self.window, bg=self.cbg)
         self.infos_frame = Frame(self.geoguessr, bg=self.cbg)
         self.abc = Frame(self.geoguessr, bg=self.cbg)
@@ -72,16 +65,25 @@ class Game:
         self.infos_frame.pack(expand=NO, side=BOTTOM)
         self.abc.pack(expand=NO, side=BOTTOM)
 
+        self.reset_all()
+
     def create_widgets(self):
         self.create_labels()
         self.create_entries()
         self.create_menu_bar()
-        self.create_abc(self.alphabet)
+
+    def create_guess(self):
+        self.guess = random.choice(self.words)
+
+        while len(self.guess) != self.words_limit:
+            self.guess = random.choice(self.words)
+            self.guess = self.guess.strip("\n")
+        print(self.guess)
 
     def create_menu_bar(self):
         menubar = Menu(self.window)
         filemenu = Menu(menubar, tearoff=0)
-        filemenu.add_command(label="New", command=self.donothing)
+        filemenu.add_command(label="New", command=self.reset_all)
         filemenu.add_command(label="Open", command=self.donothing)
         filemenu.add_command(label="Save", command=self.donothing)
         filemenu.add_separator()
@@ -90,13 +92,17 @@ class Game:
 
         helpmenu = Menu(menubar, tearoff=0)
         helpmenu.add_command(label="Help Index", command=self.donothing)
-        helpmenu.add_command(label="About...", command=self.donothing)
+        helpmenu.add_command(label="About...", command=self.about_command)
         menubar.add_cascade(label="Help", menu=helpmenu)
 
         self.window.config(menu=menubar)
 
     def donothing(self):
-        x = 0
+        pass
+
+    def about_command(self):
+        # marche que sur windows :/
+        os.system("start https://github.com/Tarkorr/Wordlepy")
 
     def create_labels(self):
         title_lbl = Label(self.window, text="Wordle   ".upper(), bg=self.cbg, font=(
@@ -137,6 +143,31 @@ class Game:
         player_entry = Entry(self.geoguessr, bg="white")
         player_entry.pack(fill=X, side=BOTTOM, pady=10)
 
+    def reset_all(self):
+        # TODO ranger ici c'est immonde :/
+        # rassmenblement de tous les displays dans une liste ça aide
+        displays = [self.display_word, self.display_word_2, self.display_word_3,
+                    self.display_word_4, self.display_word_5, self.display_word_6]
+
+        # efface ce qu'ils contiennent
+        for display in displays:
+            for widgets in display.winfo_children():
+                widgets.destroy()
+
+        # définis le mot recherché
+        self.create_guess()
+
+        # "néttoie" infos
+        self.infos["text"] = f"Hello"
+
+        # "néttoie" alphabet
+        # 0 = Nothing, 1 = NotHere, 2 = Yes, 3 = Exactly
+        self.alphabet = [[abc, 0] for abc in "abcdefghijklmnopqrstuvwxyz"]
+        self.create_abc(self.alphabet)
+
+        # "nétoie" tries
+        self.tries = []
+
     def CommandButton1(self, event):
 
         if event.keysym == "Return":
@@ -147,18 +178,18 @@ class Game:
         word = player_entry.get().lower()
 
         if word == self.guess.lower():
+            self.infos["text"] = f"Bravo !!\nle mot était {self.guess}"
             return print("WON")
 
         if word + "\n" not in self.words:
-            self.infos["text"] = "mot \ninnexistant"
-            player_entry.delete(0, 100)
+            self.infos["text"] = "mot\ninnexistant"
             return
 
         if len(word) != self.words_limit:
             self.infos["text"] = f"mots de {self.words_limit} lettres\nseulement"
         elif word in self.tries:
             player_entry.delete(0, 100)
-            self.infos["text"] = f"'{word}' \ndéjà utilisé"
+            self.infos["text"] = f"'{word}'\ndéjà utilisé"
         else:
             player_entry.delete(0, 100)
             self.tries.append(word)
@@ -182,6 +213,9 @@ class Game:
             elif index == 5:
                 self.elp_v3(word, self.display_word_6)
                 self.display_word_6.pack(expand=NO, side=TOP)
+            elif index > 5:
+                self.infos["text"] = f"perdu !\nle mot était {self.guess}"
+                self.reset_all()
 
     def elp_v3(self, word, display):
         ml = self.fast_l(word)
