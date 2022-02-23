@@ -1,7 +1,7 @@
 # Wordlepy
 
 Ceci est un Wordle basique en python. <br>
--> Pas encore terminé. <br> 
+-> Pas encore terminé. (en cours) <br> 
 -> librairie nécessaire : tkinter.<br><br>
 exécutez le code, ne lisez pas la console, la réponse y est print. <br>
 vous pouvez changer la taille du mot avec `self.words_limit`. <br>
