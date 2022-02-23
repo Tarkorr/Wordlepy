@@ -1,0 +1,2 @@
+# Wordlepy
+Wordle in python
