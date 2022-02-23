@@ -1,6 +1,6 @@
 # Wordlepy
 
-Ceci est un Wordle de basique en python. <br>
+Ceci est un Wordle basique en python. <br>
 -> Pas encore terminé. <br> <br>
 exécutez le code, ne lisez pas la console, la réponse y est print. <br>
 vous pouvez changer la taille du mot avec `self.words_limit`. <br>
