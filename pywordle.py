@@ -157,7 +157,7 @@ class Game:
         # définis le mot recherché
         self.create_guess()
 
-        # "néttoie" infos
+        # "nettoie" infos
         self.infos["text"] = f"Hello"
 
         # "néttoie" alphabet
@@ -165,7 +165,7 @@ class Game:
         self.alphabet = [[abc, 0] for abc in "abcdefghijklmnopqrstuvwxyz"]
         self.create_abc(self.alphabet)
 
-        # "nétoie" tries
+        # "nettoie" tries
         self.tries = []
 
     def CommandButton1(self, event):
